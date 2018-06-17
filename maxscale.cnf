@@ -7,6 +7,11 @@
 # This service enables the use of the MaxAdmin interface
 # MaxScale administration guide:
 # https://github.com/mariadb-corporation/MaxScale/blob/2.2/Documentation/Reference/MaxAdmin.md
+# Global parameters
+
+[maxscale]
+threads=auto
+
 [MaxAdmin-Service]
 type=service
 router=cli
@@ -16,3 +21,4 @@ type=listener
 service=MaxAdmin-Service
 protocol=maxscaled
 socket=default
+
