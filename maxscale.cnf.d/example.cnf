@@ -27,9 +27,6 @@ module=mariadbmon
 servers=server1,server2,server3
 user=maxuser
 passwd=maxpwd
-monitor_interval=2000
-auto_failover=true
-auto_rejoin=true
 
 # Service definitions
 # Service Definition for a read-only service and a read/write splitting service.
@@ -54,13 +51,7 @@ router=readwritesplit
 servers=server1,server2,server3
 user=maxuser
 passwd=maxpwd
-master_failure_mode=error_on_write
-
-[MaxInfo]
-type=service
-router=maxinfo
-user=monitor
-passwd=monitor 
+master_failure_mode=fail_on_write
 
 # Listener definitions for the services
 # Listeners represent the ports the services will listen on.
@@ -76,10 +67,3 @@ type=listener
 service=Read-Write-Service
 protocol=MySQLClient
 port=4006
-
-[MaxInfo JSON Listener]
-type=listener
-service=MaxInfo
-protocol=HTTPD
-port=8003
-

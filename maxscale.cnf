@@ -11,6 +11,9 @@
 
 [maxscale]
 threads=auto
+# this enables external access to the REST API outside of localhost
+# please review / modify for any public / non development environments
+admin_host=maxscale
 
 [MaxAdmin-Service]
 type=service
@@ -21,4 +24,3 @@ type=listener
 service=MaxAdmin-Service
 protocol=maxscaled
 socket=default
-
