@@ -13,7 +13,7 @@
 threads=auto
 # this enables external access to the REST API outside of localhost
 # please review / modify for any public / non development environments
-admin_host=maxscale
+admin_host=0.0.0.0
 
 [MaxAdmin-Service]
 type=service
