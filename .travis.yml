@@ -1,0 +1,19 @@
+language: bash
+services: docker
+env:
+  - VERSION=maxscale
+
+install:
+  - git clone https://github.com/mariadb-corporation/mariadb-docker-images ~/mariadb-docker-images
+
+before_script:
+  - env | sort
+  - cd "$VERSION"
+  - image="mariadb-docker-images:$VERSION"
+
+script:
+  - travis_retry docker build -t "$image" .
+  - ~/mariadb-docker-images/test/run.sh "$image"
+
+after_script:
+- docker images
