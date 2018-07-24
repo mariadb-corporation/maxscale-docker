@@ -110,3 +110,4 @@ $ docker-compose exec maxscale maxctrl list servers
 docker-compose down
 ```
 
+
