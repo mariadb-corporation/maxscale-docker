@@ -21,15 +21,15 @@ protocol=MariaDBBackend
 # MySQL Monitor documentation:
 # https://github.com/mariadb-corporation/MaxScale/blob/2.2/Documentation/Monitors/MariaDB-Monitor.md
 
-[MariaDB-Monitor]
-type=monitor
-module=mariadbmon
-servers=server1,server2,server3
-user=maxuser
-passwd=maxpwd
-auto_failover=true
-auto_rejoin=true
-enforce_read_only_slaves=1
+#[MariaDB-Monitor]
+#type=monitor
+#module=mariadbmon
+#servers=server1,server2,server3
+#user=maxuser
+#passwd=maxpwd
+#auto_failover=true
+#auto_rejoin=true
+#enforce_read_only_slaves=1
 
 # Service definitions
 # Service Definition for a read-only service and a read/write splitting service.
