@@ -8,3 +8,10 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "0x135659e
     rm -rf /var/lib/apt/lists/*
 COPY maxscale.cnf /etc/
 ENTRYPOINT ["maxscale", "-d", "-U", "maxscale", "-l", "stdout"]
+
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod 755 /usr/local/bin/docker-entrypoint.sh && \
+    ln -s /usr/local/bin/docker-entrypoint.sh /docker-entrypoint.sh # backwards compat
+ENTRYPOINT ["docker-entrypoint.sh"]
+
+CMD ["maxscale", "-d", "-U", "maxscale", "-l", "stdout"]
