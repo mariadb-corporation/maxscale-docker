@@ -111,3 +111,8 @@ docker-compose down
 ```
 
 
+---
+
+-	[Travis CI:  
+	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
+
