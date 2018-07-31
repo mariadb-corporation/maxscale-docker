@@ -2,6 +2,10 @@
 
 This Docker image runs the latest GA version of MariaDB MaxScale.
 
+-	[Travis CI:  
+	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
+---
+
 ## Building
 
 Run the following command in this directory to build the image.
@@ -111,8 +115,4 @@ docker-compose down
 ```
 
 
----
-
--	[Travis CI:  
-	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
 
