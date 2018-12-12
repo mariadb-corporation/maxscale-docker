@@ -47,7 +47,7 @@ Assuming the mariadb client is installed on the host machine:
 $ mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 4006 test
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MySQL connection id is 5
-Server version: 10.2.12 2.2.9-maxscale mariadb.org binary distribution
+Server version: 10.2.12 2.3.0-maxscale mariadb.org binary distribution
 
 Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 

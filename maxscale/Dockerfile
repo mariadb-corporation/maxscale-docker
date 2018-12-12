@@ -1,4 +1,4 @@
-# Dockerfile for the 2.2 GA version of MariaDB MaxScale
+# Dockerfile for the 2.3 GA version of MariaDB MaxScale
 FROM ubuntu:16.04
 
 COPY maxscale.list /etc/apt/sources.list.d
