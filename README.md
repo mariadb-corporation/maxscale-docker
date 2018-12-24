@@ -1,6 +1,6 @@
 # MariaDB MaxScale Docker image
 
-This Docker image runs the latest GA version of MariaDB MaxScale.
+This Docker image runs the latest 2.3 version of MariaDB MaxScale.
 
 -	[Travis CI:  
 	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
@@ -11,22 +11,39 @@ This Docker image runs the latest GA version of MariaDB MaxScale.
 Run the following command in this directory to build the image.
 
 ```
-docker build -t maxscale .
+docker build -t mariadb/maxscale .
 ```
 
-## Usage
-
-You must mount your configuration file into `/etc/maxscale.cnf.d/`. To do
-this, pass it as an argument to the `-v` option:
-
+## Running
+To pull the latest MaxScale image from docker hub:
 ```
-docker run -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale.cnf maxscale:latest
+docker pull mariadb/maxscale:latest
 ```
 
-## Default configuration
+To run the MaxScale container overriding the container instance name to 'mxs':
+```
+docker run -d --name mxs mariadb/maxscale:latest
+```
 
-The default configuration for the MaxScale docker image can be found in
-[this configuration file](./maxscale.cnf).
+Read on for details of how to configure the MaxScale container.
+
+## Configuration
+The default configuration for the container is fairly minimalist and can be found in [this configuration file](./maxscale.cnf). At a high level the following is enabled:
+- REST API with default user and password (admin / mariadb) listening to all hosts (0.0.0.0)
+
+### Configure via REST API
+The REST API by default listens on port 8989. To interact with this from the docker host, requires a port mapping to specified on container startup. The example below shows listing the current services via curl:
+```
+docker run -d -p 8989:8989 --name mxs mariadb/maxscale:latest
+curl -u admin:mariadb -H "Content-Type: application/json" http://localhost:8989/v1/services
+
+```
+### Configure via maxscale.cnf File
+An alternative model is to provide an overlay maxscale.cnf file that provides additional configuration for the cluster to be managed. To do this, you must mount your configuration file into `/etc/maxscale.cnf.d/`. When running the container with docker directly pass this using the argument to the `-v` option:
+
+```
+docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale.cnf mariadb/maxscale:2.2
+```
 
 ## MaxScale docker-compose setup
 
@@ -41,19 +58,19 @@ docker-compose up -d
 
 After MaxScale and the servers have started (takes a few minutes), you can find
 the readwritesplit router on port 4006 and the readconnroute on port 4008. The
-user `maxuser` with the password `maxpwd` can be used to test the cluster. 
+user `maxuser` with the password `maxpwd` can be used to test the cluster.
 Assuming the mariadb client is installed on the host machine:
 ```
 $ mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 4006 test
 Welcome to the MariaDB monitor.  Commands end with ; or \g.
 Your MySQL connection id is 5
-Server version: 10.2.12 2.3.0-maxscale mariadb.org binary distribution
+Server version: 10.2.12 2.2.9-maxscale mariadb.org binary distribution
 
 Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
 Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-MySQL [test]> 
+MySQL [test]>
 ```
 You can edit the [`maxscale.cnf.d/example.cnf`](./maxscale.cnf.d/example.cnf)
 file and recreate the MaxScale container to change the configuration.
@@ -82,8 +99,6 @@ after recovery:
 ```
 $ docker-compose stop master
 Stopping maxscaledocker_master_1 ... done
-$ docker-compose stop master
-Stopping maxscaledocker_master_1 ... done
 $ docker-compose exec maxscale maxctrl list servers
 ┌─────────┬─────────┬──────┬─────────────┬─────────────────┬─────────────┐
 │ Server  │ Address │ Port │ Connections │ State           │ GTID        │
@@ -109,10 +124,8 @@ $ docker-compose exec maxscale maxctrl list servers
 
 ```
 
+Once complete, to remove the cluster and maxscale containers:
 
 ```
-docker-compose down
+docker-compose down -v
 ```
-
-
-

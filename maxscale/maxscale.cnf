@@ -14,13 +14,3 @@ threads=auto
 # this enables external access to the REST API outside of localhost
 # please review / modify for any public / non development environments
 admin_host=0.0.0.0
-
-[MaxAdmin-Service]
-type=service
-router=cli
-
-[MaxAdmin-Listener]
-type=listener
-service=MaxAdmin-Service
-protocol=maxscaled
-socket=default
