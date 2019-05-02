@@ -28,7 +28,7 @@ docker run -d --name mxs mariadb/maxscale:latest
 Read on for details of how to configure the MaxScale container.
 
 ## Configuration
-The default configuration for the container is fairly minimalist and can be found in [this configuration file](./maxscale.cnf). At a high level the following is enabled:
+The default configuration for the container is fairly minimalist and can be found in [this configuration file](./maxscale/maxscale.cnf). At a high level the following is enabled:
 - REST API with default user and password (admin / mariadb) listening to all hosts (0.0.0.0)
 
 ### Configure via REST API
@@ -47,7 +47,7 @@ docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale
 
 ## MaxScale docker-compose setup
 
-[The MaxScale docker-compose setup](./docker-compose.yml) contains MaxScale
+[The MaxScale docker-compose setup](./maxscale/docker-compose.yml) contains MaxScale
 configured with a three node master-slave cluster. To start it, run the
 following commands in this directory.
 
@@ -72,7 +72,7 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 MySQL [test]>
 ```
-You can edit the [`maxscale.cnf.d/example.cnf`](./maxscale.cnf.d/example.cnf)
+You can edit the [`maxscale.cnf.d/example.cnf`](./maxscale/maxscale.cnf.d/example.cnf)
 file and recreate the MaxScale container to change the configuration.
 
 To stop the containers, execute the following command. Optionally, use the -v
