@@ -5,6 +5,11 @@ This Docker image runs the latest 2.3 version of MariaDB MaxScale.
 -	[Travis CI:  
 	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
 
+## Switch to the maxscale folder
+
+```
+cd maxscale
+```
 
 ## Building
 
