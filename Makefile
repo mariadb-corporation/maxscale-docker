@@ -14,4 +14,4 @@ help:
 	@echo "Usage: make build-image [DEV_SUFFIX=<image suffix>]"
 
 build-image:
-	docker build -f maxscale/Dockerfile . -t $(LOCAL_IMAGE) --build-arg VERSION=$(VERSION) --build-arg GIT_COMMIT=$(shell git rev-list -1 HEAD) --build-arg GIT_TREE_STATE=$(shell (git status --porcelain | grep -q .) && echo -dirty) --build-arg BUILD_TIME=$(shell date -u +%Y-%m-%d_%H:%M:%S)
+	docker build -f maxscale/Dockerfile maxscale -t $(LOCAL_IMAGE) --build-arg VERSION=$(VERSION) --build-arg GIT_COMMIT=$(shell git rev-list -1 HEAD) --build-arg GIT_TREE_STATE=$(shell (git status --porcelain | grep -q .) && echo -dirty) --build-arg BUILD_TIME=$(shell date -u +%Y-%m-%d_%H:%M:%S)
