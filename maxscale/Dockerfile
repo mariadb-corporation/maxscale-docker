@@ -16,7 +16,7 @@ RUN apt-get -y update && \
     apt-get -y install maxscale && \
     rm -rf /var/lib/apt/lists/* && \
     if [ ! -z $VERSION ] && [ ! -z $GIT_COMMIT ] && [ ! -z $BUILD_TIME ]; then \
-       echo "Version:    $VERSION\nGit commit: $GIT_COMMIT$GIT_TREE_STATE\nBuilt:      $BUILD_TIME" > /opt/image_details; fi
+       printf "Version:    $VERSION\nGit commit: $GIT_COMMIT$GIT_TREE_STATE\nBuilt:      $BUILD_TIME\n" > /opt/image_details; fi
 
 COPY maxscale.cnf /etc/
 ENTRYPOINT ["maxscale", "-d", "-U", "maxscale", "-l", "stdout"]
