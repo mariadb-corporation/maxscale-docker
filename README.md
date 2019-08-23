@@ -11,7 +11,7 @@ This Docker image runs the latest 2.3 version of MariaDB MaxScale.
 Run the following command in this directory to build the image.
 
 ```
-docker build -t mariadb/maxscale .
+make build-image
 ```
 
 ## Running
