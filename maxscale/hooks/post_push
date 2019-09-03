@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 repoName=${IMAGE_NAME%%:*}
@@ -8,11 +7,15 @@ oldTag=${IMAGE_NAME#*:}
 major=${oldTag%%.*}
 minor=${oldTag#*.}
 minor=${minor%%.*}
-dockerVerion=${oldTag##*-}
+bugfix=${oldTag#*.}
+bugfix=${bugfix#*.}
+bugfix=${bugfix#*.}
+bugfix=${bugfix%%-*}
 
-newTag=$major.$minor-$dockerVerion
+newTag=$major.$minor
+newTagBugfix=$major.$minor.$bugfix
 
-for tag in {$newTag,latest}; do
+for tag in {$newTag,$newTagBugfix,latest}; do
     docker tag $IMAGE_NAME ${repoName}:${tag}
     docker push ${repoName}:${tag}
 done
