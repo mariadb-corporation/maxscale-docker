@@ -1,4 +1,4 @@
-# Dockerfile for the 2.3 GA version of MariaDB MaxScale
+# Dockerfile for the 2.4 GA version of MariaDB MaxScale
 FROM ubuntu:bionic
 
 ARG VERSION
