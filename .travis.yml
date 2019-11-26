@@ -17,3 +17,10 @@ script:
 
 after_script:
 - docker images
+
+notifications:
+  email:
+    recipients:
+      - cpe@mariadb.com
+    on_success: never # default: change
+    on_failure: always # default: always
