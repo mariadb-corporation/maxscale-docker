@@ -1,48 +1,75 @@
 version: '2'
-services:
+services:                 
+
     master:
         image: mariadb:latest
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
         volumes:
-            - ./sql/master:/docker-entrypoint-initdb.d
+            - ./sql/shard-A/master:/docker-entrypoint-initdb.d
         command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3000
         ports:
             - "4001:3306"
 
     slave1:
-        image: mariadb:10.3
+        image: mariadb:latest
         depends_on:
             - master
-        environment:
+        environment:            
             MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
         volumes:
-            - ./sql/slave:/docker-entrypoint-initdb.d
+            - ./sql/shard-A/slave:/docker-entrypoint-initdb.d
         command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3001 --log-slave-updates
         ports:
             - "4002:3306"
 
-    slave2:
-        image: mariadb:10.3
-        depends_on:
-            - master
+    master2:
+        image: mariadb:latest
         environment:
-            MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'             
         volumes:
-            - ./sql/slave:/docker-entrypoint-initdb.d
-        command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3002 --log-slave-updates
+            - ./sql/shard-B/master:/docker-entrypoint-initdb.d
+        command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3002
         ports:
             - "4003:3306"
+
+    slave2:
+        image: mariadb:latest
+        depends_on:
+            - master2
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'Y' 
+        volumes:
+            - ./sql/shard-B/slave:/docker-entrypoint-initdb.d
+        command: mysqld --log-bin=mariadb-bin --binlog-format=ROW --server-id=3003 --log-slave-updates
+        ports:
+            - "4004:3306"
 
     maxscale:
         image: mariadb/maxscale:latest
         depends_on:
             - master
+            - master2  
             - slave1
             - slave2
         volumes:
-            - ./maxscale.cnf.d:/etc/maxscale.cnf.d
+            - ./maxscale.cnf.d:/etc/maxscale.cnf.d 
         ports:
-            - "4006:4006"  # readwrite port
-            - "4008:4008"  # readonly port
-            - "8989:8989"  # REST API port
+            - "3306:3306"       
+            - "4006:4006"  # shard-A              
+            - "4007:4007"  # shard-B
+            - "8989:8989"  # REST API port           
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin  
+        depends_on:
+            - maxscale
+        environment:
+            - PMA_ARBITRARY=1   
+            - PMA_HOST=maxscale 
+        restart: always
+        ports:
+            - 8080:80 
+        volumes:
+            - /sessions        
+         
