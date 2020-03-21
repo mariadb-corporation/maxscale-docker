@@ -1,7 +1,7 @@
 version: '2'
 services:
     master:
-        image: mariadb:10.3
+        image: mariadb:latest
         environment:
             MYSQL_ALLOW_EMPTY_PASSWORD: 'Y'
         volumes:
