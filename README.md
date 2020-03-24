@@ -1,131 +1,42 @@
-# MariaDB MaxScale Docker image
+# REAL World Project
 
-This Docker image runs the latest 2.4 version of MariaDB MaxScale.
+## Prerequisites
+-docker
+-docker-compose
+-mariadb-client
+-git
 
--	[Travis CI:  
-	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
-
-
-## Building
-
-Run the following command in this directory to build the image.
-
-```
-make build-image
-```
-
-## Running
-To pull the latest MaxScale image from docker hub:
-```
-docker pull mariadb/maxscale:latest
-```
-
-To run the MaxScale container overriding the container instance name to 'mxs':
-```
-docker run -d --name mxs mariadb/maxscale:latest
-```
-
-Read on for details of how to configure the MaxScale container.
-
-## Configuration
-The default configuration for the container is fairly minimalist and can be found in [this configuration file](./maxscale.cnf). At a high level the following is enabled:
-- REST API with default user and password (admin / mariadb) listening to all hosts (0.0.0.0)
-
-### Configure via REST API
-The REST API by default listens on port 8989. To interact with this from the docker host, requires a port mapping to specified on container startup. The example below shows listing the current services via curl:
-```
-docker run -d -p 8989:8989 --name mxs mariadb/maxscale:latest
-curl -u admin:mariadb -H "Content-Type: application/json" http://localhost:8989/v1/services
-
-```
-### Configure via maxscale.cnf File
-An alternative model is to provide an overlay maxscale.cnf file that provides additional configuration for the cluster to be managed. To do this, you must mount your configuration file into `/etc/maxscale.cnf.d/`. When running the container with docker directly pass this using the argument to the `-v` option:
-
-```
-docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale.cnf mariadb/maxscale:2.2
-```
+## Clonning
+Run git clone https://github.com/gustanik/CNA350
 
 ## MaxScale docker-compose setup
 
-[The MaxScale docker-compose setup](./docker-compose.yml) contains MaxScale
-configured with a three node master-slave cluster. To start it, run the
-following commands in this directory.
+1. run sudo docker-compose up -d --build
 
-```
-docker-compose build
-docker-compose up -d
-```
-
-After MaxScale and the servers have started (takes a few minutes), you can find
-the readwritesplit router on port 4006 and the readconnroute on port 4008. The
-user `maxuser` with the password `maxpwd` can be used to test the cluster.
-Assuming the mariadb client is installed on the host machine:
-```
-$ mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 4006 test
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MySQL connection id is 5
-Server version: 10.2.12 2.2.9-maxscale mariadb.org binary distribution
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-MySQL [test]>
-```
-You can edit the [`maxscale.cnf.d/example.cnf`](./maxscale.cnf.d/example.cnf)
-file and recreate the MaxScale container to change the configuration.
-
-To stop the containers, execute the following command. Optionally, use the -v
-flag to also remove the volumes.
-
-To run maxctrl in the container to see the status of the cluster:
-```
-$ docker-compose exec maxscale maxctrl list servers
+2. run sudo docker-compose exec maxscale maxctrl list servers
 ┌─────────┬─────────┬──────┬─────────────┬─────────────────┬──────────┐
 │ Server  │ Address │ Port │ Connections │ State           │ GTID     │
 ├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
-│ server1 │ master  │ 3306 │ 0           │ Master, Running │ 0-3000-5 │
+│ server1 │ master  │ 3306 │ 0           │ Master, Running │ 0-3000-32│
 ├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
-│ server2 │ slave1  │ 3306 │ 0           │ Slave, Running  │ 0-3000-5 │
+│ server2 │ slave1  │ 3306 │ 0           │ Slave, Running  │ 0-3000-32│
 ├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
-│ server3 │ slave2  │ 3306 │ 0           │ Running         │ 0-3000-5 │
+│ server3 │ master2 │ 3306 │ 0           │ Master, Running │ 0-3002-31│
+└─────────┴─────────┴──────┴─────────────┴─────────────────┴──────────┘
+├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
+│ server4 │ slave2  │ 3306 │ 0           │ Slave, Running  │ 0-3002-31│
+└─────────┴─────────┴──────┴─────────────┴─────────────────┴──────────┘
+├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
+│ shard-A │127.0.0.1│ 4006 │ 0           │ Running         │          │
+├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
+│ Shard-B │127.0.0.1│ 4007 │ 0           │ Running         │          │
 └─────────┴─────────┴──────┴─────────────┴─────────────────┴──────────┘
 
-```
+## Accessing master shard database zipcode one
+run mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 3306 -e "SELECT * FROM zipcodes_one.zipcodes_one LIMIT 5;" 
+ 
+ Zipcode | ZipCodeType | City | State | LocationType | Coord_Lat | Coord_Long | Location | Decommisioned | TaxReturnsFiled | EstimatedPopulation | TotalWages | +---------+-------------+----------+-------+--------------+-----------+------------+-------------------+---------------+-----------------+---------------------+------------+ | 705 | STANDARD | AIBONITO | PR | PRIMARY | 18.14 | -66.26 | NA-US-PR-AIBONITO | FALSE | | | | | 610 | STANDARD | ANASCO | PR | PRIMARY | 18.28 | -67.14 | NA-US-PR-ANASCO | FALSE | | | | | 611 | PO BOX | ANGELES | PR | PRIMARY | 18.28 | -66.79 | NA-US-PR-ANGELES | FALSE | | | | | 612 | STANDARD | ARECIBO | PR | PRIMARY | 18.45 | -66.73 | NA-US-PR-ARECIBO | FALSE | | | | | 601 | STANDARD | ADJUNTAS | PR | PRIMARY | 18.16 | -66.72 | NA-US-PR-ADJUNTAS | FALSE | | | | +---------+-------------+----------+-------+--------------+-----------+------------+-------------------+---------------+-----------------+---------------------+
+ ## Accessing master shard database zipcode two
+run mysql -umaxuser -pmaxpwd -h 127.0.0.1 -P 3306 -e "SELECT * FROM zipcodes_two.zipcodes_two LIMIT 5;" 
 
-The cluster is configured to utilize automatic failover. To illustrate this you can stop the master
-container and watch for maxscale to failover to one of the original slaves and then show it rejoining
-after recovery:
-```
-$ docker-compose stop master
-Stopping maxscaledocker_master_1 ... done
-$ docker-compose exec maxscale maxctrl list servers
-┌─────────┬─────────┬──────┬─────────────┬─────────────────┬─────────────┐
-│ Server  │ Address │ Port │ Connections │ State           │ GTID        │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server1 │ master  │ 3306 │ 0           │ Down            │ 0-3000-5    │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server2 │ slave1  │ 3306 │ 0           │ Master, Running │ 0-3001-7127 │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server3 │ slave2  │ 3306 │ 0           │ Slave, Running  │ 0-3001-7127 │
-└─────────┴─────────┴──────┴─────────────┴─────────────────┴─────────────┘
-$ docker-compose start master
-Starting master ... done
-$ docker-compose exec maxscale maxctrl list servers
-┌─────────┬─────────┬──────┬─────────────┬─────────────────┬─────────────┐
-│ Server  │ Address │ Port │ Connections │ State           │ GTID        │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server1 │ master  │ 3306 │ 0           │ Slave, Running  │ 0-3001-7127 │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server2 │ slave1  │ 3306 │ 0           │ Master, Running │ 0-3001-7127 │
-├─────────┼─────────┼──────┼─────────────┼─────────────────┼─────────────┤
-│ server3 │ slave2  │ 3306 │ 0           │ Slave, Running  │ 0-3001-7127 │
-└─────────┴─────────┴──────┴─────────────┴─────────────────┴─────────────┘
-
-```
-
-Once complete, to remove the cluster and maxscale containers:
-
-```
-docker-compose down -v
-```
+| Zipcode | ZipCodeType | City | State | LocationType | Coord_Lat | Coord_Long | Location | Decommisioned | TaxReturnsFiled | EstimatedPopulation | TotalWages | +---------+-------------+-------------+-------+--------------+-----------+------------+----------------------+---------------+-----------------+---------------------+------------+ | 42040 | STANDARD | FARMINGTON | KY | PRIMARY | 36.67 | -88.53 | NA-US-KY-FARMINGTON | FALSE | 465 | 896 | 11562973 | | 41524 | STANDARD | FEDSCREEK | KY | PRIMARY | 37.4 | -82.24 | NA-US-KY-FEDSCREEK | FALSE | | | | | 42533 | STANDARD | FERGUSON | KY | PRIMARY | 37.06 | -84.59 | NA-US-KY-FERGUSON | FALSE | 429 | 761 | 9555412 | | 40022 | STANDARD | FINCHVILLE | KY | PRIMARY | 38.15 | -85.31 | NA-US-KY-FINCHVILLE | FALSE | 437 | 839 | 19909942 | | 40023 | STANDARD | FISHERVILLE | KY | PRIMARY | 38.16 | -85.42 | NA-US-KY-FISHERVILLE | FALSE | 1884 | 3733 | 113020684 | +---------+-------------+-------------+-------+--------------+-----------+------------+----------------------+---------------+-----------------+---------------------+------------+
