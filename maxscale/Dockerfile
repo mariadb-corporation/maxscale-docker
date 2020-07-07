@@ -16,7 +16,7 @@ RUN apt-get -y update && \
     apt-get -y update && \
     apt-get -y install maxscale && \
     rm -rf /var/lib/apt/lists/* && \
-    if [ REMOVE_MAXSCALE_REPOSITORY = yes ]; then \
+    if [ $REMOVE_MAXSCALE_REPOSITORY = yes ]; then \
         rm /etc/apt/sources.list.d/maxscale.list ; \
     fi && \
     if [ ! -z $VERSION ] && [ ! -z $GIT_COMMIT ] && [ ! -z $BUILD_TIME ]; then \
