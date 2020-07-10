@@ -5,16 +5,20 @@ ARG VERSION
 ARG GIT_COMMIT
 ARG GIT_TREE_STATE
 ARG BUILD_TIME
+ARG REMOVE_MAXSCALE_REPOSITORY=no
 
 COPY maxscale.list /etc/apt/sources.list.d/maxscale.list.tmp
 
 RUN apt-get -y update && \
-    apt-get -y install ca-certificates gnupg2 less && \
+    apt-get -y install gnupg2 ca-certificates less sysstat && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "0x135659e928c12247" && \
     mv /etc/apt/sources.list.d/maxscale.list.tmp /etc/apt/sources.list.d/maxscale.list && \
     apt-get -y update && \
     apt-get -y install maxscale && \
     rm -rf /var/lib/apt/lists/* && \
+    if [ $REMOVE_MAXSCALE_REPOSITORY = yes ]; then \
+        rm /etc/apt/sources.list.d/maxscale.list ; \
+    fi && \
     if [ ! -z $VERSION ] && [ ! -z $GIT_COMMIT ] && [ ! -z $BUILD_TIME ]; then \
        printf "Version:    $VERSION\nGit commit: $GIT_COMMIT$GIT_TREE_STATE\nBuilt:      $BUILD_TIME\n" > /opt/image_details; fi
 
