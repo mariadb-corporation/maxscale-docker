@@ -10,7 +10,7 @@ ARG REMOVE_MAXSCALE_REPOSITORY=no
 COPY maxscale.list /etc/apt/sources.list.d/maxscale.list.tmp
 
 RUN apt-get -y update && \
-    apt-get -y install gnupg2 ca-certificates sysstat && \
+    apt-get -y install gnupg2 ca-certificates less sysstat && \
     apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "0x135659e928c12247" && \
     mv /etc/apt/sources.list.d/maxscale.list.tmp /etc/apt/sources.list.d/maxscale.list && \
     apt-get -y update && \
