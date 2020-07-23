@@ -8,56 +8,60 @@ This Docker image runs the latest 2.4 version of MariaDB MaxScale.
 
 ## Building
 
-Run the following command in this directory to build the image.
-
+Build the image:
 ```
 make build-image
 ```
 
 ## Running
-To pull the latest MaxScale image from docker hub:
+
+Pull the latest MaxScale image from docker hub:
 ```
 docker pull mariadb/maxscale:latest
 ```
 
-To run the MaxScale container overriding the container instance name to 'mxs':
+Run the MaxScale container as "mxs":
 ```
 docker run -d --name mxs mariadb/maxscale:latest
 ```
 
-Read on for details of how to configure the MaxScale container.
-
 ## Configuration
-The default configuration for the container is fairly minimalist and can be found in [this configuration file](./maxscale.cnf). At a high level the following is enabled:
-- REST API with default user and password (admin / mariadb) listening to all hosts (0.0.0.0)
 
-### Configure via REST API
-The REST API by default listens on port 8989. To interact with this from the docker host, requires a port mapping to specified on container startup. The example below shows listing the current services via curl:
+The [default configuration](maxscale/maxscale.cnf) for the container is minimal
+and only enables the REST API.
+
+The REST API by default listens on port 8989. The default user is "admin" with
+password "mariadb". Accessing it from the docker host requires a port mapping
+specified on container startup. The example below shows general information via
+curl.
 ```
 docker run -d -p 8989:8989 --name mxs mariadb/maxscale:latest
-curl -u admin:mariadb -H "Content-Type: application/json" http://localhost:8989/v1/services
-
+curl -u admin:mariadb http://localhost:8989/v1/maxscale
 ```
-### Configure via maxscale.cnf File
-An alternative model is to provide an overlay maxscale.cnf file that provides additional configuration for the cluster to be managed. To do this, you must mount your configuration file into `/etc/maxscale.cnf.d/`. When running the container with docker directly pass this using the argument to the `-v` option:
 
+See [MaxScale documentation](https://github.com/mariadb-corporation/MaxScale/blob/2.4/Documentation/REST-API/API.md)
+for more information about the REST API.
+
+### Configure via configuration file
+
+Custom configuration can be given in an additional configuration file (e.g.
+`my-maxscale.cnf`). The file needs to be mounted into `/etc/maxscale.cnf.d/`:
 ```
-docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale.cnf mariadb/maxscale:2.2
+docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale.cnf mariadb/maxscale:latest
 ```
 
 ## MaxScale docker-compose setup
 
-[The MaxScale docker-compose setup](./docker-compose.yml) contains MaxScale
-configured with a three node master-slave cluster. To start it, run the
-following commands in this directory.
-
+[The MaxScale docker-compose setup](maxscale/docker-compose.yml) contains
+MaxScale configured with a three node master-slave cluster. To start it, run the
+following commands in the `maxscale` directory.
 ```
 docker-compose build
 docker-compose up -d
 ```
 
-After MaxScale and the servers have started (takes a few minutes), you can find
-the readwritesplit router on port 4006 and the readconnroute on port 4008. The
+After MaxScale and the servers have started (takes a few seconds), you can find
+the ReadWriteSplit-router on port 4006 and the ReadConnRoute on port 4008. The
 user `maxuser` with the password `maxpwd` can be used to test the cluster.
 Assuming the mariadb client is installed on the host machine:
 ```
@@ -72,13 +76,11 @@ Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
 MySQL [test]>
 ```
-You can edit the [`maxscale.cnf.d/example.cnf`](./maxscale.cnf.d/example.cnf)
+
+You can edit the [`maxscale.cnf.d/example.cnf`](maxscale/maxscale.cnf.d/example.cnf)
 file and recreate the MaxScale container to change the configuration.
 
-To stop the containers, execute the following command. Optionally, use the -v
-flag to also remove the volumes.
-
-To run maxctrl in the container to see the status of the cluster:
+Run *maxctrl* in the container to see the status of the cluster:
 ```
 $ docker-compose exec maxscale maxctrl list servers
 ┌─────────┬─────────┬──────┬─────────────┬─────────────────┬──────────┐
@@ -88,14 +90,14 @@ $ docker-compose exec maxscale maxctrl list servers
 ├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
 │ server2 │ slave1  │ 3306 │ 0           │ Slave, Running  │ 0-3000-5 │
 ├─────────┼─────────┼──────┼─────────────┼─────────────────┼──────────┤
-│ server3 │ slave2  │ 3306 │ 0           │ Running         │ 0-3000-5 │
+│ server3 │ slave2  │ 3306 │ 0           │ Slave, Running  │ 0-3000-5 │
 └─────────┴─────────┴──────┴─────────────┴─────────────────┴──────────┘
-
 ```
 
-The cluster is configured to utilize automatic failover. To illustrate this you can stop the master
-container and watch for maxscale to failover to one of the original slaves and then show it rejoining
-after recovery:
+The cluster is configured to utilize automatic failover. To illustrate this you
+can stop the master container and watch for MaxScale to failover to one of the
+slaves (may take a few seconds). If the server recovers, it is rejoined.
+
 ```
 $ docker-compose stop master
 Stopping maxscaledocker_master_1 ... done
@@ -124,8 +126,7 @@ $ docker-compose exec maxscale maxctrl list servers
 
 ```
 
-Once complete, to remove the cluster and maxscale containers:
-
+Finally, remove the containers:
 ```
 docker-compose down -v
 ```
