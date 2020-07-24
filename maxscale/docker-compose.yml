@@ -35,7 +35,7 @@ services:
             - "4003:3306"
 
     maxscale:
-        image: mariadb/maxscale:latest
+        image: mariadb/maxscale:2.4
         depends_on:
             - master
             - slave1
