@@ -1,5 +1,0 @@
-# MariaDB MaxScale
-# To use the latest stable release of MaxScale, use "latest" as the version
-# To use the latest beta (or stable if no current beta) release of MaxScale, use "beta" as the version
-deb http://downloads.mariadb.com/MaxScale/2.4.11/ubuntu bionic main
-

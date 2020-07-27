@@ -1,24 +1,20 @@
 # Dockerfile for the 2.4 GA version of MariaDB MaxScale
-FROM ubuntu:bionic
+FROM centos:7
 
 ARG VERSION
 ARG GIT_COMMIT
 ARG GIT_TREE_STATE
 ARG BUILD_TIME
 ARG REMOVE_MAXSCALE_REPOSITORY=no
+ADD https://downloads.mariadb.com/MariaDB/mariadb_repo_setup /tmp/mariadb_repo_setup
 
-COPY maxscale.list /etc/apt/sources.list.d/maxscale.list.tmp
-
-RUN apt-get -y update && \
-    apt-get -y install gnupg2 ca-certificates less sysstat && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "0x135659e928c12247" && \
-    mv /etc/apt/sources.list.d/maxscale.list.tmp /etc/apt/sources.list.d/maxscale.list && \
-    apt-get -y update && \
-    apt-get -y install maxscale && \
-    rm -rf /var/lib/apt/lists/* && \
-    if [ $REMOVE_MAXSCALE_REPOSITORY = yes ]; then \
-        rm /etc/apt/sources.list.d/maxscale.list ; \
-    fi && \
+# Install MariaDB repositories
+RUN chmod +x /tmp/mariadb_repo_setup && \
+    /tmp/mariadb_repo_setup --mariadb-maxscale-version=2.4.11 && \
+    yum -y list updates && \
+    # Install MaxScale
+    yum -y install maxscale && yum -y clean metadata && \
+    if [ $REMOVE_MAXSCALE_REPOSITORY = yes ]; then rm /etc/yum.repos.d/mariadb.repo ; fi && \
     if [ ! -z $VERSION ] && [ ! -z $GIT_COMMIT ] && [ ! -z $BUILD_TIME ]; then \
        printf "Version:    $VERSION\nGit commit: $GIT_COMMIT$GIT_TREE_STATE\nBuilt:      $BUILD_TIME\n" > /opt/image_details; fi
 
