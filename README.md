@@ -1,4 +1,4 @@
-![logo](MDB-HLogo_RGB.jpg)
+![logo](https://raw.githubusercontent.com/mariadb-corporation/mariadb-community-columnstore-docker/master/MDB-HLogo_RGB.jpg)
 
 # MariaDB MaxScale Docker image
 
