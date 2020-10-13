@@ -2,7 +2,7 @@
 FROM centos:8
 
 ENV TINI_VERSION=v0.18.0
-ENV MXS_VERSION=maxscale-2.5.3-MXS-3218
+ENV MXS_VERSION=2.5.3
 
 # Add Tini Init Process
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
