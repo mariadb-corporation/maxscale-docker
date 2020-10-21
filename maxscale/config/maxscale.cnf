@@ -1,5 +1,4 @@
 [maxscale]
-admin_secure_gui=false
 threads=auto
 
 # this enables external access to the REST API outside of localhost
