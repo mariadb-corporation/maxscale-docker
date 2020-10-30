@@ -3,6 +3,7 @@ FROM centos:8
 
 ENV TINI_VERSION=v0.18.0
 ENV MXS_VERSION=2.5.5
+ARG CLEAR_REPOSITORY
 ARG REPOSITORY
 ARG REPOSITORY_KEY
 
@@ -41,6 +42,11 @@ RUN dnf -y install bind-utils \
     sudo \
     vim \
     wget
+
+# Remove repository configuration
+RUN if [ "${CLEAR_REPOSITORY}" = "true" ]; then \
+        rm /etc/yum.repos.d/mariadb.repo; \
+    fi
 
 # Copy Files To Image
 COPY config/maxscale.cnf /etc/
