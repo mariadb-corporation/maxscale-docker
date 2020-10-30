@@ -3,6 +3,8 @@ FROM centos:8
 
 ENV TINI_VERSION=v0.18.0
 ENV MXS_VERSION=2.5.5
+ARG REPOSITORY
+ARG REPOSITORY_KEY
 
 # Add Tini Init Process
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
@@ -10,9 +12,17 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/
 # Add Repo Setup script
 ADD https://downloads.mariadb.com/MariaDB/mariadb_repo_setup /tmp/mariadb_repo_setup
 
+# Add script to setup the private repository
+COPY scripts/setup-custom-repository.sh /tmp/setup-custom-repository.sh
+
 # Install MariaDB Repositories
-RUN chmod +x /tmp/mariadb_repo_setup && \
-    /tmp/mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION}
+RUN if [ -z "${REPOSITORY}" ]; then \
+        chmod +x /tmp/mariadb_repo_setup && \
+        /tmp/mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION}; \
+    else \
+        chmod +x /tmp/setup-custom-repository.sh && \
+        /tmp/setup-custom-repository.sh --repository ${REPOSITORY} --repository-key ${REPOSITORY_KEY}; \
+    fi
 
 # Update System
 RUN dnf -y install epel-release && \
