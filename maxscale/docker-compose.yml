@@ -35,14 +35,17 @@ services:
             - "4003:3306"
 
     maxscale:
-        image: mariadb/maxscale:2.4
+        image: mariadb/maxscale:2.5
         depends_on:
             - master
             - slave1
             - slave2
         volumes:
             - ./maxscale.cnf.d:/etc/maxscale.cnf.d
+            - ./maxscale.cnf:/etc/maxscale.cnf
         ports:
             - "4006:4006"  # readwrite port
             - "4008:4008"  # readonly port
             - "8989:8989"  # REST API port
+        restart: on-failure
+
