@@ -6,7 +6,7 @@ function exitMaxScale {
     /usr/bin/monit quit
 }
 
-rm -f /var/run/syslogd.pid
+rm -f /var/run/*.pid
 rsyslogd
 
 trap exitMaxScale SIGTERM
