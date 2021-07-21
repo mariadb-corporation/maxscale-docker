@@ -19,3 +19,4 @@ for tag in {$newTag,$newTagBugfix,latest}; do
     docker tag $IMAGE_NAME ${repoName}:${tag}
     docker push ${repoName}:${tag}
 done
+
