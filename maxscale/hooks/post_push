@@ -15,7 +15,8 @@ bugfix=${bugfix%%-*}
 newTag=$major.$minor
 newTagBugfix=$major.$minor.$bugfix
 
-for tag in {$newTag,$newTagBugfix,latest}; do
+for tag in {$newTag,$newTagBugfix}; do
     docker tag $IMAGE_NAME ${repoName}:${tag}
     docker push ${repoName}:${tag}
 done
+
