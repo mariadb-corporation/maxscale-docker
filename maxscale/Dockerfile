@@ -30,7 +30,8 @@ RUN dnf -y install epel-release && \
     dnf -y upgrade
 
 # Install Some Basic Dependencies & MaxScale
-RUN dnf -y install bind-utils \
+RUN dnf clean expire-cache && \
+    dnf -y install bind-utils \
     less \
     maxscale \
     monit \
