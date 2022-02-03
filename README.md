@@ -2,7 +2,7 @@
 
 # MariaDB MaxScale Docker image
 
-This Docker image runs the latest 2.5 version of MariaDB MaxScale.
+This Docker image runs MariaDB MaxScale.
 
 -	[Travis CI:  
 	![build status badge](https://img.shields.io/travis/mariadb-corporation/maxscale-docker/master.svg)](https://travis-ci.org/mariadb-corporation/maxscale-docker/branches)
@@ -41,7 +41,7 @@ docker run -d -p 8989:8989 --name mxs mariadb/maxscale:latest
 curl -u admin:mariadb http://localhost:8989/v1/maxscale
 ```
 
-See [MaxScale documentation](https://github.com/mariadb-corporation/MaxScale/blob/2.4/Documentation/REST-API/API.md)
+See [MaxScale documentation](https://mariadb.com/kb/en/11125/)
 for more information about the REST API.
 
 ### Configure via configuration file
@@ -55,4 +55,3 @@ docker run -d --name mxs -v $PWD/my-maxscale.cnf:/etc/maxscale.cnf.d/my-maxscale
 ### Commandline Access
 
 `docker exec -it mxs bash`
-
