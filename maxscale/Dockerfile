@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM ockylinux/rockylinux:8
+FROM rockylinux/rockylinux:8
 
 ENV TINI_VERSION=v0.18.0
 ENV MXS_VERSION=6.2.2
