@@ -1,8 +1,8 @@
 # vim:set ft=dockerfile:
-FROM centos:8
+FROM ockylinux/rockylinux:8
 
 ENV TINI_VERSION=v0.18.0
-ENV MXS_VERSION=2.5.6
+ENV MXS_VERSION=6.2.2
 ARG CLEAR_REPOSITORY
 ARG REPOSITORY
 ARG REPOSITORY_KEY
@@ -32,6 +32,7 @@ RUN dnf -y install epel-release && \
 # Install Some Basic Dependencies & MaxScale
 RUN dnf clean expire-cache && \
     dnf -y install bind-utils \
+    findutils \
     less \
     maxscale \
     monit \
