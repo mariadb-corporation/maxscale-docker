@@ -32,7 +32,8 @@ RUN dnf clean expire-cache && \
     rsyslog \
     sudo \
     vim \
-    wget
+    wget \
+    procps-ng
 
 # Copy Files To Image
 COPY config/maxscale.cnf /etc/
