@@ -2,7 +2,7 @@
 FROM rockylinux/rockylinux:8
 
 ENV TINI_VERSION=v0.18.0
-ENV MXS_VERSION=6.2.3
+ENV MXS_VERSION=6.2.4
 
 # Add Tini Init Process
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
