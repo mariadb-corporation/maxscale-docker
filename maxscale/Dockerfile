@@ -1,18 +1,11 @@
 # vim:set ft=dockerfile:
-FROM rockylinux/rockylinux:8
+FROM rockylinux
 
-ENV TINI_VERSION=v0.18.0
 ENV MXS_VERSION=6.2.4
 
-# Add Tini Init Process
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-
-# Add Repo Setup script
-ADD https://downloads.mariadb.com/MariaDB/mariadb_repo_setup /tmp/mariadb_repo_setup
-
-# Install MariaDB Repositories
-RUN chmod +x /tmp/mariadb_repo_setup && \
-    /tmp/mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION}
+# Add MariaDB Enterprise Repo
+RUN curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | \
+    bash -s -- --mariadb-maxscale-version=${MXS_VERSION} --apply
 
 # Update System
 RUN dnf -y install epel-release && \
@@ -29,11 +22,11 @@ RUN dnf clean expire-cache && \
     ncurses \
     net-tools \
     openssl \
+    procps-ng \
     rsyslog \
-    sudo \
+    tini \
     vim \
-    wget \
-    procps-ng
+    wget
 
 # Copy Files To Image
 COPY config/maxscale.cnf /etc/
@@ -41,13 +34,12 @@ COPY config/maxscale.cnf /etc/
 COPY config/monit.d/ /etc/monit.d/
 
 COPY scripts/maxscale-start \
-     scripts/maxscale-stop \
-     scripts/maxscale-restart \
-     /usr/bin/
+    scripts/maxscale-stop \
+    scripts/maxscale-restart \
+    /usr/bin/
 
 # Chmod Some Files
-RUN chmod +x /usr/bin/tini \
-    /usr/bin/maxscale-start \
+RUN chmod +x /usr/bin/maxscale-start \
     /usr/bin/maxscale-stop \
     /usr/bin/maxscale-restart
 
@@ -70,7 +62,6 @@ RUN chmod +x /usr/bin/docker-entrypoint.sh && \
 # Clean System & Reduce Size
 RUN dnf clean all && \
     rm -rf /var/cache/dnf && \
-    rm /tmp/mariadb_repo_setup && \
     sed -i 's|SysSock.Use="off"|SysSock.Use="on"|' /etc/rsyslog.conf && \
     sed -i 's|^.*module(load="imjournal"|#module(load="imjournal"|g' /etc/rsyslog.conf && \
     sed -i 's|^.*StateFile="imjournal.state")|#  StateFile="imjournal.state"\)|g' /etc/rsyslog.conf && \
