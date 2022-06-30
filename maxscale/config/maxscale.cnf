@@ -1,6 +1,6 @@
 [maxscale]
 admin_secure_gui=false
-threads=auto
+threads=1
 
 # this enables external access to the REST API outside of localhost
 # please review / modify for any public / non development environments
