@@ -1,5 +1,5 @@
 # vim:set ft=dockerfile:
-FROM centos:8
+FROM centos:8 as base
 
 ENV TINI_VERSION=v0.18.0
 ENV MXS_VERSION=2.5.6
@@ -65,15 +65,6 @@ RUN chmod +x /usr/bin/tini \
     /usr/bin/maxscale-stop \
     /usr/bin/maxscale-restart
 
-# Expose MariaDB Port
-EXPOSE 3306
-
-# Expose REST API port
-EXPOSE 8989
-
-# Create Persistent Volume
-VOLUME ["/var/lib/maxscale"]
-
 # Copy Entrypoint To Image
 COPY scripts/docker-entrypoint.sh /usr/bin/
 
@@ -91,6 +82,19 @@ RUN dnf clean all && \
     find /var/log -type f -exec cp /dev/null {} \; && \
     cat /dev/null > ~/.bash_history && \
     history -c
+
+# Clear the build history
+FROM scratch
+COPY --from=base / /
+
+# Expose MariaDB Port
+EXPOSE 3306
+
+# Expose REST API port
+EXPOSE 8989
+
+# Create Persistent Volume
+VOLUME ["/var/lib/maxscale"]
 
 # Start Up
 ENTRYPOINT ["/usr/bin/tini","--","docker-entrypoint.sh"]
