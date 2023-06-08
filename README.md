@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/mariadb-corporation/mariadb-community-columnstore-docker/master/MDB-HLogo_RGB.jpg)
+![logo](https://mariadb.com/wp-content/uploads/2019/11/mariadb-logo_blue-transparent.png)
 
 # MariaDB MaxScale Docker image
 
@@ -29,8 +29,8 @@ docker run -d --name mxs mariadb/maxscale:latest
 
 ## Configuration
 
-The [default configuration](maxscale/maxscale.cnf) for the container is minimal
-and only enables the REST API.
+The default configuration for the container is minimal and only enables the
+REST API.
 
 The REST API by default listens on port 8989. The default user is "admin" with
 password "mariadb". Accessing it from the docker host requires a port mapping
@@ -41,7 +41,7 @@ docker run -d -p 8989:8989 --name mxs mariadb/maxscale:latest
 curl -u admin:mariadb http://localhost:8989/v1/maxscale
 ```
 
-See [MaxScale documentation](https://mariadb.com/kb/en/11125/)
+See [MaxScale documentation](https://mariadb.com/kb/en/mariadb-maxscale-2208-rest-api/)
 for more information about the REST API.
 
 ### Configure via configuration file
