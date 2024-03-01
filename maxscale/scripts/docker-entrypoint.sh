@@ -8,6 +8,7 @@ function exitMaxScale {
 
 rm -f /var/run/*.pid
 rsyslogd
+chown -R maxscale:maxscale /var/lib/maxscale
 
 trap exitMaxScale SIGTERM
 
