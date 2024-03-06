@@ -1,17 +1,16 @@
 IMAGE_NAME := mariadb/maxscale
-VERSION := 6.4.14
-DEV_SUFFIX ?=
-
-ifneq ($(DEV_SUFFIX), )
-  LOCAL_IMAGE := $(IMAGE_NAME):$(VERSION)-dev-$(DEV_SUFFIX)-$(shell git rev-parse --short=6 HEAD)
-else
-  LOCAL_IMAGE := $(IMAGE_NAME):$(VERSION)
-endif
+MXS_VERSION ?=
+IMAGE_TAG := $(IMAGE_NAME):$(MXS_VERSION)-ubi
+USAGE := "Usage: make build-image [MXS_VERSION=<mxs-version>]"
 
 .PHONY: help
 
+ifeq ($(MXS_VERSION), )
+    $(error MXS_VERSION is empty. $(USAGE))
+endif
+
 help:
-	@echo "Usage: make build-image [DEV_SUFFIX=<image suffix>]"
+	@echo $(USAGE)
 
 build-image:
-	docker build -f maxscale/Dockerfile maxscale -t $(LOCAL_IMAGE) --build-arg VERSION=$(VERSION) --build-arg GIT_COMMIT=$(shell git rev-list -1 HEAD) --build-arg GIT_TREE_STATE=$(shell (git status --porcelain | grep -q .) && echo -dirty) --build-arg BUILD_TIME=$(shell date -u +%Y-%m-%d_%H:%M:%S)
+	docker build -f Dockerfile -t $(IMAGE_TAG) --build-arg MXS_VERSION=$(MXS_VERSION) .
