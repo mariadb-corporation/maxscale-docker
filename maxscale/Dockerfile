@@ -59,12 +59,17 @@ COPY scripts/docker-entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/docker-entrypoint.sh && \
     ln -s /usr/bin/docker-entrypoint.sh /docker-entrypoint.sh
 
-# Clean System & Reduce Size
+# Clean System & Reduce Size. The greps ensure that rsyslog.conf contents are as expected.
 RUN dnf clean all && \
     rm -rf /var/cache/dnf && \
+    grep '^[[:blank:]]*SysSock.Use="off"' /etc/rsyslog.conf && \
     sed -i 's|SysSock.Use="off"|SysSock.Use="on"|' /etc/rsyslog.conf && \
-    sed -i 's|^.*module(load="imjournal"|#module(load="imjournal"|g' /etc/rsyslog.conf && \
-    sed -i 's|^.*StateFile="imjournal.state")|#  StateFile="imjournal.state"\)|g' /etc/rsyslog.conf && \
+    grep '^module(load="imjournal"' /etc/rsyslog.conf && \
+    sed -i 's|^module(load="imjournal"|#module(load="imjournal"|' /etc/rsyslog.conf && \
+    grep '^[[:blank:]]*UsePid="system"' /etc/rsyslog.conf && \
+    sed -i 's|^\([[:blank:]]*\)UsePid="system"|#\1UsePid="system"|' /etc/rsyslog.conf && \
+    grep '^[[:blank:]]*StateFile="imjournal.state")' /etc/rsyslog.conf && \
+    sed -i 's|^\([[:blank:]]*\)StateFile="imjournal.state")|#\1StateFile="imjournal.state")|' /etc/rsyslog.conf && \
     find /var/log -type f -exec cp /dev/null {} \; && \
     cat /dev/null > ~/.bash_history && \
     history -c
