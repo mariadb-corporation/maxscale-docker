@@ -1,0 +1,8 @@
+# Binaries
+/bin/
+
+# Preflight
+/artifacts/
+
+# Log
+*.log
