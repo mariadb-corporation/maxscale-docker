@@ -13,7 +13,7 @@ $(LOCALBIN):
 ## Tool Binaries
 PREFLIGHT ?= $(LOCALBIN)/preflight
 ## Tool Versions
-PREFLIGHT_VERSION ?= 1.9.6
+PREFLIGHT_VERSION ?= 1.9.9
 
 .PHONY: help
 
