@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
 FROM rockylinux:8
 
-ENV MXS_VERSION=21.06.18
+ENV MXS_VERSION=21.06.19
 
 # Add MariaDB Enterprise Repo
 RUN curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | \
