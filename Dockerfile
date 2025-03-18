@@ -22,5 +22,5 @@ RUN useradd -r maxscale && \
 # Run as non root. Required for OpenShift container certification.
 USER maxscale
 
-ENTRYPOINT ["maxscale","--nodaemon", "--user=maxscale", "--log=stdout"]
+ENTRYPOINT ["maxscale","--nodaemon", "--log=stdout"]
 
