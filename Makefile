@@ -12,8 +12,6 @@ $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 ## Tool Binaries
 PREFLIGHT ?= $(LOCALBIN)/preflight
-## Tool Versions
-PREFLIGHT_VERSION ?= 1.12.1
 
 .PHONY: help
 
@@ -42,19 +40,18 @@ preflight-image-submit: preflight ## Run preflight tests on the image and submit
 
 .PHONY: preflight
 preflight: ## Download preflight locally if necessary.
-ifeq (,$(wildcard $(PREFLIGHT)))
-ifeq (,$(shell which preflight 2>/dev/null))
 	@{ \
 	set -e ;\
-	mkdir -p $(dir $(PREFLIGHT)) ;\
-	OS=$(shell uname | tr '[:upper:]' '[:lower:]') && \
-	ARCH=$(shell uname -m) ;\
-	if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi ;\
-	if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi ;\
-	curl -sSLo $(PREFLIGHT) https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$(PREFLIGHT_VERSION)/preflight-$${OS}-$${ARCH} ;\
-	chmod +x $(PREFLIGHT) ;\
+	if ! command -v preflight >/dev/null 2>&1; then \
+		PREFLIGHT_VERSION=$$(curl -s https://api.github.com/repos/redhat-openshift-ecosystem/openshift-preflight/releases/latest | jq -r .tag_name) ;\
+		mkdir -p $(dir $(PREFLIGHT)) ;\
+		OS=$$(uname | tr '[:upper:]' '[:lower:]') ;\
+		ARCH=$$(uname -m) ;\
+		if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi ;\
+		if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi ;\
+		curl -sSLo $(PREFLIGHT) https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$$PREFLIGHT_VERSION/preflight-$$OS-$$ARCH ;\
+		chmod +x $(PREFLIGHT) ;\
+	else \
+		PREFLIGHT=$$(command -v preflight) ;\
+	fi \
 	}
-else
-	PREFLIGHT := $(shell which preflight)
-endif
-endif
