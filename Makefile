@@ -35,7 +35,7 @@ preflight-image-submit: preflight ## Run preflight tests on the image and submit
 	$(PREFLIGHT) check container $(PREFLIGHT_IMAGE)\
 		--submit \
 		--pyxis-api-token=$(REDHAT_API_KEY) \
-		--certification-project-id=$(REDHAT_PROJECT_ID)\
+		--certification-component-id=$(REDHAT_PROJECT_ID)\
 		--docker-config $(DOCKER_CONFIG) 
 
 .PHONY: preflight
