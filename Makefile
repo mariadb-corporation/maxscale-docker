@@ -42,16 +42,12 @@ preflight-image-submit: preflight ## Run preflight tests on the image and submit
 preflight: ## Download preflight locally if necessary.
 	@{ \
 	set -e ;\
-	if ! command -v preflight >/dev/null 2>&1; then \
-		PREFLIGHT_VERSION=$$(curl -s https://api.github.com/repos/redhat-openshift-ecosystem/openshift-preflight/releases/latest | jq -r .tag_name) ;\
-		mkdir -p $(dir $(PREFLIGHT)) ;\
-		OS=$$(uname | tr '[:upper:]' '[:lower:]') ;\
-		ARCH=$$(uname -m) ;\
-		if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi ;\
-		if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi ;\
-		curl -sSLo $(PREFLIGHT) https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$$PREFLIGHT_VERSION/preflight-$$OS-$$ARCH ;\
-		chmod +x $(PREFLIGHT) ;\
-	else \
-		PREFLIGHT=$$(command -v preflight) ;\
-	fi \
+	PREFLIGHT_VERSION=$$(curl -s https://api.github.com/repos/redhat-openshift-ecosystem/openshift-preflight/releases/latest | jq -r .tag_name) ;\
+	mkdir -p $(dir $(PREFLIGHT)) ;\
+	OS=$$(uname | tr '[:upper:]' '[:lower:]') ;\
+	ARCH=$$(uname -m) ;\
+	if [ "$$ARCH" = "x86_64" ]; then ARCH="amd64"; fi ;\
+	if [ "$$ARCH" = "aarch64" ]; then ARCH="arm64"; fi ;\
+	curl -sSLo $(PREFLIGHT) https://github.com/redhat-openshift-ecosystem/openshift-preflight/releases/download/$$PREFLIGHT_VERSION/preflight-$$OS-$$ARCH ;\
+	chmod +x $(PREFLIGHT) ;\
 	}
