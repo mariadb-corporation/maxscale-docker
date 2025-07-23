@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/ubi-minimal:8.10-1179.1741795396
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 
 ARG MXS_VERSION
 
