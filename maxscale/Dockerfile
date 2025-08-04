@@ -2,10 +2,12 @@
 FROM rockylinux:8
 
 ENV MXS_VERSION=21.06.20
+ENV CHECKSUM=c4a0f3dade02c51a6a28ca3609a13d7a0f8910cccbb90935a2f218454d3a914a
 
-# Add MariaDB Enterprise Repo
-RUN curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | \
-    bash -s -- --mariadb-maxscale-version=${MXS_VERSION} --apply
+# Add MariaDB repository
+RUN curl -LsSO https://r.mariadb.com/downloads/mariadb_repo_setup && \
+    echo "${CHECKSUM} mariadb_repo_setup" | sha256sum -c - && chmod u+x mariadb_repo_setup && \
+    ./mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION} --skip-server && rm mariadb_repo_setup
 
 # Update system, install tools and MaxScale. Also, use a recent NodeJS-version to
 # avoid some vulnerability warnings.
