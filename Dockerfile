@@ -3,7 +3,7 @@ FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
 ARG MXS_VERSION
 
 COPY --chmod=500 mariadb_repo_setup /tmp/mariadb_repo_setup
-RUN /tmp/mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION} --skip-check-installed
+RUN /tmp/mariadb_repo_setup --mariadb-maxscale-version=${MXS_VERSION} --skip-check-installed --skip-server --skip-tools
 
 # Install MaxScale
 RUN microdnf -y install maxscale shadow-utils && microdnf clean all
