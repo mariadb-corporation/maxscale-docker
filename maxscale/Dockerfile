@@ -1,7 +1,7 @@
 # vim:set ft=dockerfile:
 FROM rockylinux:8
 
-ENV MXS_VERSION=23.02.14
+ENV MXS_VERSION=23.02.15
 ENV CHECKSUM=923eea378be2c129adb4d191f01162c1fe5473f1114d7586f096b5f6b9874efe
 
 # Add MariaDB repository
