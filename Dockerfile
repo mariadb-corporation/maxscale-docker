@@ -2,7 +2,7 @@
 FROM rockylinux:8
 
 ARG MXS_VERSION
-ENV CHECKSUM=923eea378be2c129adb4d191f01162c1fe5473f1114d7586f096b5f6b9874efe
+ENV CHECKSUM=73f4ab14ccc3ceb8c03bb283dd131a3235cfc28086475f43e9291d2060d48c97
 
 # Add MariaDB repository
 RUN curl -LsSO https://r.mariadb.com/downloads/mariadb_repo_setup && \
