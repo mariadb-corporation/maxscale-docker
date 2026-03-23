@@ -7,7 +7,9 @@ on:
         required: true
         type: string
       tags:
-        description: 'Tags separated by comma'
+        description: |
+          Tags to be used in the image build, placing full version in the first position (e.g. 23.08.13-ubi).
+          For example: "23.08.13-ubi,23.08-ubi,latest".
         required: true
         type: string
         default: 'mariadb/maxscale:insert_version_here-ubi'
@@ -63,10 +65,12 @@ jobs:
       - name: Preflight image
         run: |
           IFS=',' read -r -a TAGS_ARRAY <<< "${{ github.event.inputs.tags }}"
-          for TAG in "${TAGS_ARRAY[@]}"; do
-            echo "Running preflight for \"$TAG\""
-            PREFLIGHT_IMAGE="$TAG" make preflight-image-submit 
-          done
+          # Use only the first tag in the list to prevent duplicate submission errors (400 Bad Request). 
+          # Certification is done by sha256, this is fine.
+          TAG="${TAGS_ARRAY[0]}"
+
+          echo "Running preflight for \"$TAG\""
+          PREFLIGHT_IMAGE="$TAG" make preflight-image-submit
         env:
           MXS_VERSION: "${{ github.event.inputs.version }}"
           REDHAT_API_KEY: "${{ secrets.REDHAT_API_KEY }}"
